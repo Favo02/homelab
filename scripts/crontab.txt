@@ -1,0 +1,4 @@
+# sudo cronjobs
+00 03 * * * /home/server/scripts/restic-backup.sh >> /home/server/scripts/logs.txt 2>&1
+30 03 * * 2 /home/server/scripts/docker-system-prune.sh >> /home/server/scripts/logs.txt 2>&1
+00 04 * * 2 /home/server/scripts/update-reboot.sh >> /home/server/scripts/logs.txt 2>&1

@@ -5,7 +5,8 @@
 
 !scripts
 !scripts/**
-# ignore secrets
+# ignore secrets and logs
 scripts/.*
+scripts/logs.txt
 # include secrets template
 !scripts/.*.template
