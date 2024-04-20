@@ -1,0 +1,30 @@
+services:
+
+  games-minecraft:
+    image: itzg/minecraft-server:latest
+    container_name: games-minecraft
+    restart: unless-stopped
+    ports:
+      - 25565:25565
+    volumes:
+      - './minecraft-data:/data'
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: 'TRUE'
+      INIT_MEMORY: '2G'
+      MAX_MEMORY: '3G'
+      TYPE: 'SPIGOT'
+      VERSION: '1.19.4'
+
+  games-minecraft-backups:
+    image: itzg/mc-backup:latest
+    container_name: games-minecraft-backups
+    restart: unless-stopped
+    volumes:
+      - './minecraft-data:/data:ro'
+      - './backups-data:/backups'
+    environment:
+      BACKUP_INTERVAL: '2h'
+      RCON_HOST: games-minecraft
+      PRUNE_BACKUPS_DAYS: 15

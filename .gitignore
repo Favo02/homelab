@@ -10,3 +10,11 @@ scripts/.*
 scripts/logs.txt
 # include secrets template
 !scripts/.*.template
+
+# services
+
+!services
+!services/**
+# ignore sercrets and docker volumes
+services/**/*-data
+services/**/*.env

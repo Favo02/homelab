@@ -1,0 +1,13 @@
+services:
+
+  database-postgres:
+    image: postgres:15 # cannot upgrade due to current data version
+    container_name: database-postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - './postgres-data:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: ${INIT_USERNAME}
+      POSTGRES_PASSWORD: ${INIT_PASSWORD}

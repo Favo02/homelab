@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  [service-name]:
+    image: [image-name]
+    container_name: [container-name]
+    restart: unless-stopped
+    ports:
+      - 1:1
+    volumes:
+      - './data:/data'
+    [everythingelse]:
+      - EXAMPLE=EXAMPLE
+    environment:
+      - EXAMPLE=EXAMPLE

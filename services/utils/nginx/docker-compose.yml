@@ -1,0 +1,13 @@
+services:
+
+  util-nginx:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: util-nginx
+    restart: unless-stopped
+    volumes:
+      - './nginx-data:/data'
+      - './letsencrypt-data:/etc/letsencrypt'
+    ports:
+      - 10001:81
+      - 80:80
+      - 443:443

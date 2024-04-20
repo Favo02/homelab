@@ -1,0 +1,13 @@
+services:
+
+  util-gotify:
+    image: gotify/server:latest
+    container_name: util-gotify
+    restart: unless-stopped
+    ports:
+      - 10004:80
+    volumes:
+      - './gotify-data:/app/data'
+    environment:
+      - TZ=${TIMEZONE}
+

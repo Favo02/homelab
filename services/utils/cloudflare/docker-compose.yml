@@ -1,0 +1,10 @@
+services:
+
+  util-cloudflare:
+    image: oznu/cloudflare-ddns:latest
+    container_name: util-cloudflare
+    restart: unless-stopped
+    environment:
+      - API_KEY=${API_KEY}
+      - ZONE=${DOMAIN}
+      - PROXIED=true

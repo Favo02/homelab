@@ -1,0 +1,11 @@
+services:
+
+  util-portainer:
+    image: portainer/portainer-ce:latest
+    container_name: util-portainer
+    restart: unless-stopped
+    ports:
+      - 10003:9443
+    volumes:
+      - './portainer-data:/data'
+      - '/var/run/docker.sock:/var/run/docker.sock'

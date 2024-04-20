@@ -1,0 +1,8 @@
+services:
+
+  website-socialnetworkformusic:
+    image: ghcr.io/favo02/social-network-for-music:0.28.4
+    container_name: website-socialnetworkformusic
+    restart: unless-stopped
+    ports:
+      - 3001:3003

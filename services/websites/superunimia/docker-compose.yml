@@ -1,0 +1,12 @@
+services:
+
+  website-superunimia:
+    build: .
+    container_name: website-superunimia
+    restart: unless-stopped
+    ports:
+      - 3002:80
+    volumes:
+      - './src-data:/var/www/html/'
+      - './config-data/php.ini:/usr/local/etc/php/conf.d/php.ini'
+      - './config-data/apache2.conf:/etc/apache2/apache2.conf'

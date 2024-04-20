@@ -1,0 +1,8 @@
+services:
+
+  website-favo02dev:
+    image: ghcr.io/favo02/favo02.dev:latest
+    container_name: website-favo02dev
+    restart: unless-stopped
+    ports:
+      - 3000:3000
