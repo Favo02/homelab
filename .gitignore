@@ -1,0 +1,11 @@
+*
+!.gitignore
+
+# scripts
+
+!scripts
+!scripts/**
+# ignore secrets
+scripts/.*
+# include secrets template
+!scripts/.*.template
