@@ -1,0 +1,14 @@
+services:
+
+  util-speedtest:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    container_name: util-speedtest
+    restart: unless-stopped
+    volumes:
+      - './speedtest-data:/config'
+    ports:
+      - 10007:80
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - DB_CONNECTION=sqlite
