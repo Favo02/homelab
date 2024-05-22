@@ -16,11 +16,12 @@ The services configured _(running and not)_ are:
 - [utils](./services/utils)
     - [authelia](./services/utils/authelia): Self-hosted 2FA authentication 🔒
     - [cloudflare](./services/utils/cloudflare): DDNS to automatically detect and update the public IP address 🌐
-    - [firefly](./services/utils/firefly): Self-hosted personal finance manager 💶 
+    - [firefly](./services/utils/firefly): Self-hosted personal finance manager 💶
     - [gotify](./services/utils/gotify): Self-hosted push notification service 📲
     - [nginx](./services/utils/nginx): Reverse proxy server 🔄
     - [pihole](./services/utils/pihole): Network-wide ad blocker 🚫
     - [portainer](./services/utils/portainer): Lightweight management UI for Docker 🐳
+    - [speedtest](./services/utils/speedtest): Self-hosted internet quality tracker 📶
     - [wireguard](./services/utils/wireguard): Fast and modern VPN protocol 🔒
 - [websites](./services/websites)
     - [favo02dev](./services/websites/favo02dev): Personal website (React) 💻
