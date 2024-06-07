@@ -12,3 +12,8 @@ services:
       - PUID=1000
       - PGID=1000
       - DB_CONNECTION=sqlite
+      - APP_KEY=${APP_KEY}
+      - APP_TIMEZONE=${TIMEZONE}
+      - DISPLAY_TIMEZONE=${TIMEZONE}
+      - SPEEDTEST_SCHEDULE=${SCHEDULE}
+      - PRUNE_RESULTS_OLDER_THAN=${PRUNE}
