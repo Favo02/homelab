@@ -19,3 +19,6 @@ scripts/logs.txt
 # ignore sercrets and docker volumes
 services/**/*-data
 services/**/*.env
+
+# dotfiles
+!dotfiles
