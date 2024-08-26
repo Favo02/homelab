@@ -12,11 +12,13 @@ The services configured _(running and not)_ are:
     - [postgres](./services/databases/postgres/): PostgreSQL database server 🐘
 - [games](./services/games)
     - [minecraft](./services/games/minecraft): Minecraft server 🎮
-    - [teamspeak](./services/games/teamspeak): Voice communication server 🎙️
+- [services](./services/services)
+    - [teamspeak](./services/services/teamspeak): Voice communication server 🎙️
+    - [firefly](./services/services/firefly): Self-hosted personal finance manager 💶
+    - [immich](./services/services/immich): Self-hosted Google Photo clone 📸
 - [utils](./services/utils)
     - [authelia](./services/utils/authelia): Self-hosted 2FA authentication 🔒
     - [cloudflare](./services/utils/cloudflare): DDNS to automatically detect and update the public IP address 🌐
-    - [firefly](./services/utils/firefly): Self-hosted personal finance manager 💶
     - [gotify](./services/utils/gotify): Self-hosted push notification service 📲
     - [nginx](./services/utils/nginx): Reverse proxy server 🔄
     - [pihole](./services/utils/pihole): Network-wide ad blocker 🚫
@@ -24,6 +26,8 @@ The services configured _(running and not)_ are:
     - [speedtest](./services/utils/speedtest): Self-hosted internet quality tracker 📶
     - [wireguard](./services/utils/wireguard): Fast and modern VPN protocol 🔒
 - [websites](./services/websites)
-    - [favo02dev](./services/websites/favo02dev): Personal website (React) 💻
-    - [socialnetworkformusic](./services/websites/socialnetworkformusic): University project (React + Node + MongoDB) 🎵
-    - [superunimia](./services/websites/superunimia): University project (PHP + PostgreSQL) 🎓
+    - [favo02dev](./services/websites/favo02dev): Personal website (React - [repo](https://github.com/favo02/favo02.dev)) 💻
+    - [socialnetworkformusic](./services/websites/socialnetworkformusic): University project (React + Node + MongoDB - [repo](https://github.com/favo02/social-network-for-music)) 🎵
+    - [superunimia](./services/websites/superunimia): University project (PHP + PostgreSQL - [repo](https://github.com/favo02/super-unimia)) 🎓
+    - [seelabel](./services/websites/seelabel): Hackathon project (React + Python - [repo](https://github.com/favo02/see-label)) 🏷️
+    - [cessadvisorapi](./services/websites/cessadvisorapi): Personal project (Svelte + OCaml - [repo](https://github.com/favo02/cess-advisor)) 🚽
