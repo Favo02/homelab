@@ -1,0 +1,27 @@
+services:
+
+  service-firefly-app:
+    image: fireflyiii/core:latest
+    container_name: service-firefly-app
+    restart: unless-stopped
+    ports:
+      - 20000:8080
+    volumes:
+      - './firefly-upload-data:/var/www/html/storage/upload'
+    env_file: .env
+    depends_on:
+      - service-firefly-db
+
+  service-firefly-db:
+    image: mariadb:latest
+    container_name: service-firefly-db
+    restart: unless-stopped
+    env_file: .db.env
+    volumes:
+      - './firefly-db-data:/var/lib/mysql'
+
+  service-firefly-cron:
+    image: alpine:latest
+    container_name: service-firefly-cron
+    restart: unless-stopped
+    command: sh -c "echo \"0 3 * * * wget -qO- http://service-firefly-app:8080/api/v1/cron/${STATIC_CRON_TOKEN}\" | crontab - && crond -f -L /dev/stdout"

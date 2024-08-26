@@ -1,28 +1,28 @@
 services:
 
-  games-teamspeak:
+  service-teamspeak:
     image: teamspeak:latest
-    container_name: games-teamspeak
+    container_name: service-teamspeak
     restart: unless-stopped
     ports:
       - 9987:9987/udp
     volumes:
       - './teamspeak-data:/var/ts3server/'
     depends_on:
-      - games-teamspeak-db
+      - service-teamspeak-db
     environment:
       TS3SERVER_DB_PLUGIN: ts3db_mariadb
       TS3SERVER_DB_SQLCREATEPATH: create_mariadb
-      TS3SERVER_DB_HOST: games-teamspeak-db
+      TS3SERVER_DB_HOST: service-teamspeak-db
       TS3SERVER_DB_USER: ${DB_USER}
       TS3SERVER_DB_PASSWORD: ${DB_PASSWORD}
       TS3SERVER_DB_NAME: ${DB_NAME}
       TS3SERVER_DB_WAITUNTILREADY: 30
       TS3SERVER_LICENSE: accept
 
-  games-teamspeak-db:
+  service-teamspeak-db:
     image: mariadb:latest
-    container_name: games-teamspeak-db
+    container_name: service-teamspeak-db
     restart: unless-stopped
     volumes:
       - './db-data:/var/lib/mysql'
