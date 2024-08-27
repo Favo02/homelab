@@ -16,6 +16,7 @@ The services configured _(running and not)_ are:
     - [teamspeak](./services/services/teamspeak): Voice communication server 🎙️
     - [firefly](./services/services/firefly): Self-hosted personal finance manager 💶
     - [immich](./services/services/immich): Self-hosted Google Photo clone 📸
+    - [linkding](./services/services/linkding): Bookmark manager 🔖
 - [utils](./services/utils)
     - [authelia](./services/utils/authelia): Self-hosted 2FA authentication 🔒
     - [cloudflare](./services/utils/cloudflare): DDNS to automatically detect and update the public IP address 🌐
