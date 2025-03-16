@@ -1,16 +1,16 @@
 services:
 
   immich-server:
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    image: ghcr.io/immich-app/immich-server:release
     container_name: service-immich-app
     restart: unless-stopped
     volumes:
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
-      - /etc/localtime:/etc/localtime:ro
+      - './library-data:/usr/src/app/upload'
+      - '/etc/localtime:/etc/localtime:ro'
     env_file:
       - .env
     ports:
-      - 20001:3001
+      - 20001:2283
     depends_on:
       - redis
       - database
@@ -19,12 +19,12 @@ services:
 
   immich-machine-learning:
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
-    # Example tag: ${IMMICH_VERSION:-release}-cuda
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    # Example tag: release-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:release
     container_name: service-immich-ml
     restart: unless-stopped
     volumes:
-      - ${ML_CACHE_LOCATION}:/cache
+      - './ml-cache-data:/cache'
     env_file:
       - .env
     healthcheck:
@@ -47,7 +47,7 @@ services:
       POSTGRES_DB: ${DB_DATABASE_NAME}
       POSTGRES_INITDB_ARGS: '--data-checksums'
     volumes:
-      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
+      - './database-data:/var/lib/postgresql/data'
     healthcheck:
       test: pg_isready --dbname='${DB_DATABASE_NAME}' --username='${DB_USERNAME}' || exit 1; Chksum="$$(psql --dbname='${DB_DATABASE_NAME}' --username='${DB_USERNAME}' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
       interval: 5m
