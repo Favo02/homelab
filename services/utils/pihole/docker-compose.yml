@@ -10,6 +10,6 @@ services:
       - 10002:80/tcp
     volumes:
       - './pihole-data:/etc/pihole'
-      - './dnsmasq-data:/etc/dnsmasq.d'
     environment:
       TZ: ${TIMEZONE}
+      FTLCONF_dns_listeningMode: ${LISTENING_MODE}
