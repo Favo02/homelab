@@ -13,3 +13,4 @@ services:
     environment:
       TZ: ${TIMEZONE}
       FTLCONF_dns_listeningMode: ${LISTENING_MODE}
+    shm_size: '100mb' # shared memory is insufficient by default, causing crashes
