@@ -12,7 +12,7 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 10000:8080
+      - 10000:8080 # TODO: remove when the proxied dashboard is fucking working
     environment:
       - TZ=${TIMEZONE}
       - CF_API_EMAIL=${CF_API_EMAIL}
@@ -42,13 +42,50 @@ services:
       - --entrypoints.websecure.http.tls.certResolver=letsencrypt
       - --entrypoints.websecure.http.tls.domains[0].main=favo02.dev
       - --entrypoints.websecure.http.tls.domains[0].sans=*.favo02.dev
+      # plugins
+      # TODO: geoblocking, umami, fail2ban, limit ip access to lan
+      # - --experimental.plugins.traefik-umami-plugin.modulename=github.com/1cedsoda/traefik-umami-plugin
+      # - --experimental.plugins.traefik-umami-plugin.version=v1.0.3
 
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.util-traefik.rule=Host(`traefik.favo02.dev`)"
-      - "traefik.http.services.util-traefik.loadbalancer.server.port=8080"
-      - "traefik.http.routers.util-traefik.entrypoints=websecure"
-      - "traefik.http.routers.util-traefik.tls=true"
-      - "traefik.http.routers.util-traefik.tls.certresolver=letsencrypt"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.util-traefik.rule=Host(`traefik.favo02.dev`)'
+      - 'traefik.http.services.util-traefik.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.util-traefik.entrypoints=websecure'
+      - 'traefik.http.routers.util-traefik.tls.certresolver=letsencrypt'
+    # read below
+    networks:
+      - proxy01 # util-portainer
+      - proxy02 # util-gotify
+      - proxy03 # util-umami
+      - proxy04
+      - proxy05
+      - proxy06
+      - proxy07
+      - proxy08
+      - proxy09
+      - proxy10
+      - proxy11
+      - proxy12
+      - proxy13
+      - proxy14
+      - proxy15
 
-
+# Networks that let the proxy communicate with containers without allowing cross-container communications
+# More than used are defined to avoid restarting this container when adding a new proxyied service
+networks:
+  proxy01:
+  proxy02:
+  proxy03:
+  proxy04:
+  proxy05:
+  proxy06:
+  proxy07:
+  proxy08:
+  proxy09:
+  proxy10:
+  proxy11:
+  proxy12:
+  proxy13:
+  proxy14:
+  proxy15:

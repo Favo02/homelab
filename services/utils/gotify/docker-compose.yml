@@ -4,10 +4,22 @@ services:
     image: gotify/server:latest
     container_name: util-gotify
     restart: unless-stopped
-    ports:
-      - 10004:80
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 10004:80
     volumes:
       - './gotify-data:/app/data'
     environment:
       - TZ=${TIMEZONE}
+    networks:
+      - traefik_proxy02
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.util-gotify.rule=Host(`gotify.favo02.dev`) || Host(`push.favo02.dev`)'
+      - 'traefik.http.services.util-gotify.loadbalancer.server.port=80'
+      - 'traefik.http.routers.util-gotify.entrypoints=websecure'
+      - 'traefik.http.routers.util-gotify.tls.certresolver=letsencrypt'
 
+networks:
+  traefik_proxy02:
+    external: true

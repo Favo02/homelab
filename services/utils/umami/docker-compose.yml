@@ -4,34 +4,38 @@ services:
     image: ghcr.io/umami-software/umami:postgresql-latest
     container_name: util-umami
     restart: unless-stopped
-    ports:
-      - 10006:3000
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 10006:3000
     environment:
       DATABASE_URL: postgresql://umami:umami@util-umami-db:5432/umami
       DATABASE_TYPE: postgresql
       APP_SECRET: ${APP_SECRET}
-    depends_on:
-      util-umami-db:
-        condition: service_healthy
     init: true
-    healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:3000/api/heartbeat"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    networks:
+      - default
+      - traefik_proxy03
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.util-umami.rule=Host(`umami.favo02.dev`) || Host(`analytics.favo02.dev`)'
+      - 'traefik.http.services.util-umami.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.util-umami.entrypoints=websecure'
+      - 'traefik.http.routers.util-umami.tls.certresolver=letsencrypt'
 
   util-umami-db:
     image: postgres:15-alpine
     container_name: util-umami-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: umami
       POSTGRES_USER: umami
       POSTGRES_PASSWORD: umami
     volumes:
       - './umami-db-data:/var/lib/postgresql/data'
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    networks:
+      - default
+
+networks:
+  default:
+  traefik_proxy03:
+    external: true

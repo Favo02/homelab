@@ -4,8 +4,21 @@ services:
     image: portainer/portainer-ce:latest
     container_name: util-portainer
     restart: unless-stopped
-    ports:
-      - 10003:9443
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 10003:9000
     volumes:
       - './portainer-data:/data'
       - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - traefik_proxy01
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.util-portainer.rule=Host(`portainer.favo02.dev`)'
+      - 'traefik.http.services.util-portainer.loadbalancer.server.port=9000'
+      - 'traefik.http.routers.util-portainer.entrypoints=websecure'
+      - 'traefik.http.routers.util-portainer.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy01:
+    external: true
