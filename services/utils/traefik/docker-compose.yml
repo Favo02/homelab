@@ -1,6 +1,6 @@
 services:
 
-  util-traefik:
+  traefik:
     image: traefik:latest
     container_name: util-traefik
     restart: unless-stopped
@@ -12,14 +12,14 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 10000:8080 # TODO: remove when the proxied dashboard is fucking working
+      # dashboard accessible only through reverse proxy
+      # - 55555:8080
     environment:
-      - TZ=${TIMEZONE}
-      - CF_API_EMAIL=${CF_API_EMAIL}
-      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+      TZ: ${TIMEZONE}
+      CF_API_EMAIL: ${CF_API_EMAIL}
+      CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}
     command:
       - --api.dashboard=true
-      - --api.insecure=true
       - --log.level=debug
       # docker provider
       - --providers.docker=true
@@ -44,22 +44,21 @@ services:
       - --entrypoints.websecure.http.tls.domains[0].sans=*.favo02.dev
       # plugins
       # TODO: geoblocking, umami, fail2ban, limit ip access to lan
-      # - --experimental.plugins.traefik-umami-plugin.modulename=github.com/1cedsoda/traefik-umami-plugin
-      # - --experimental.plugins.traefik-umami-plugin.version=v1.0.3
-
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.util-traefik.rule=Host(`traefik.favo02.dev`)'
-      - 'traefik.http.services.util-traefik.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.util-traefik.service=api@internal'
       - 'traefik.http.routers.util-traefik.entrypoints=websecure'
       - 'traefik.http.routers.util-traefik.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.util-traefik.middlewares=auth'
+      - 'traefik.http.middlewares.auth.basicauth.users=${BASIC_AUTH}'
     # read below
     networks:
       - proxy01 # util-portainer
       - proxy02 # util-gotify
       - proxy03 # util-umami
-      - proxy04
-      - proxy05
+      - proxy04 # service-firefly
+      - proxy05 # service-immich
       - proxy06
       - proxy07
       - proxy08

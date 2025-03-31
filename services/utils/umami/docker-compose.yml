@@ -1,14 +1,14 @@
 services:
 
-  util-umami:
+  umami:
     image: ghcr.io/umami-software/umami:postgresql-latest
     container_name: util-umami
     restart: unless-stopped
     # connection is permitted only through reverse proxy
     # ports:
-    #   - 10006:3000
+    #   - 55555:3000
     environment:
-      DATABASE_URL: postgresql://umami:umami@util-umami-db:5432/umami
+      DATABASE_URL: postgresql://umami:umami@umami-db:5432/umami
       DATABASE_TYPE: postgresql
       APP_SECRET: ${APP_SECRET}
     init: true
@@ -17,12 +17,13 @@ services:
       - traefik_proxy03
     labels:
       - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy03'
       - 'traefik.http.routers.util-umami.rule=Host(`umami.favo02.dev`) || Host(`analytics.favo02.dev`)'
       - 'traefik.http.services.util-umami.loadbalancer.server.port=3000'
       - 'traefik.http.routers.util-umami.entrypoints=websecure'
       - 'traefik.http.routers.util-umami.tls.certresolver=letsencrypt'
 
-  util-umami-db:
+  umami-db:
     image: postgres:15-alpine
     container_name: util-umami-db
     restart: unless-stopped
