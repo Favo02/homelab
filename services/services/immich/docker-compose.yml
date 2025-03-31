@@ -9,13 +9,24 @@ services:
       - '/etc/localtime:/etc/localtime:ro'
     env_file:
       - .env
-    ports:
-      - 20001:2283
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:2283
     depends_on:
       - redis
       - database
     healthcheck:
       disable: false
+    networks:
+      - default
+      - traefik_proxy05
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy05'
+      - 'traefik.http.routers.service-immich.rule=Host(`immich.favo02.dev`) || Host(`photos.favo02.dev`)'
+      - 'traefik.http.services.service-immich.loadbalancer.server.port=2283'
+      - 'traefik.http.routers.service-immich.entrypoints=websecure'
+      - 'traefik.http.routers.service-immich.tls.certresolver=letsencrypt'
 
   immich-machine-learning:
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
@@ -29,6 +40,8 @@ services:
       - .env
     healthcheck:
       disable: false
+    networks:
+      - default
 
   redis:
     image: docker.io/redis:6.2-alpine@sha256:e3b17ba9479deec4b7d1eeec1548a253acc5374d68d3b27937fcfe4df8d18c7e
@@ -36,6 +49,8 @@ services:
     restart: unless-stopped
     healthcheck:
       test: redis-cli ping || exit 1
+    networks:
+      - default
 
   database:
     image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
@@ -54,3 +69,10 @@ services:
       start_interval: 30s
       start_period: 5m
     command: ["postgres", "-c", "shared_preload_libraries=vectors.so", "-c", 'search_path="$$user", public, vectors', "-c", "logging_collector=on", "-c", "max_wal_size=2GB", "-c", "shared_buffers=512MB", "-c", "wal_compression=on"]
+    networks:
+      - default
+
+networks:
+  default:
+  traefik_proxy05:
+    external: true
