@@ -1,6 +1,6 @@
 services:
 
-  database-postgres:
+  postgres:
     image: postgres:15 # cannot upgrade due to current data version
     container_name: database-postgres
     restart: unless-stopped

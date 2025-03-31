@@ -1,6 +1,6 @@
 services:
 
-  database-mongo:
+  mongo:
     image: mongo:4.4.6 # cannot upgrade due to server CPU
     container_name: database-mongo
     restart: unless-stopped
