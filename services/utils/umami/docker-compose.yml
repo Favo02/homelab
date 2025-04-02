@@ -20,7 +20,7 @@ services:
       - 'traefik.docker.network=traefik_proxy03'
       - 'traefik.http.routers.util-umami.rule=Host(`umami.favo02.dev`) || Host(`analytics.favo02.dev`)'
       - 'traefik.http.services.util-umami.loadbalancer.server.port=3000'
-      - 'traefik.http.routers.util-umami.entrypoints=websecure'
+      - 'traefik.http.routers.util-umami.entrypoints=webs-in,webs-ex'
       - 'traefik.http.routers.util-umami.tls.certresolver=letsencrypt'
 
   umami-db:

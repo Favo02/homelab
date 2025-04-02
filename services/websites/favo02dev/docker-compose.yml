@@ -14,7 +14,7 @@ services:
       - 'traefik.docker.network=traefik_proxy06'
       - 'traefik.http.routers.website-favo02dev.rule=Host(`favo02.dev`)'
       - 'traefik.http.services.website-favo02dev.loadbalancer.server.port=3000'
-      - 'traefik.http.routers.website-favo02dev.entrypoints=websecure'
+      - 'traefik.http.routers.website-favo02dev.entrypoints=webs-in,webs-ex'
       - 'traefik.http.routers.website-favo02dev.tls.certresolver=letsencrypt'
 
 networks:

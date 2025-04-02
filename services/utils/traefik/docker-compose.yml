@@ -10,8 +10,11 @@ services:
       - './traefik-data/acme.json:/acme.json'
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     ports:
+      # read below (entrypoints configurations) for more
       - 80:80
+      - 81:81
       - 443:443
+      - 444:444
       # dashboard accessible only through reverse proxy
       # - 55555:8080
     environment:
@@ -32,27 +35,45 @@ services:
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.disablePropagationCheck=true
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=60
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1
-      # redirect http to https
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.websecure.address=:443
-      # https configuration
-      - --entrypoints.websecure.http.tls=true
-      - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=favo02.dev
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.favo02.dev
-      # plugins
-      # TODO: geoblocking, umami, fail2ban, limit ip access to lan
+      # plugins and middlewares
+      # TODO: lan only to internal
+      # - --middlewares.lan-only.ipallowlist.sourceRange=127.0.0.1/32,192.168.1.0/24
+      # TODO: umami (traefik-umami-feeder ?)
+      # TODO: geoblocking
+      # TODO: fail2ban
+      # TODO: rate limiting (crowdsec-bouncer-traefik-plugin ?)
+      # TODO: www redirect
+      # internal http: reachable only within LAN
+      - --entrypoints.web-in.address=:80
+      # - --entrypoints.web-in.http.middlewares=lan-only
+      - --entrypoints.web-in.http.redirections.entrypoint.to=webs-in
+      - --entrypoints.web-in.http.redirections.entrypoint.scheme=https
+      # external http: port 80 is mapped to 81 on the router
+      - --entrypoints.web-ex.address=:81
+      - --entrypoints.web-ex.http.redirections.entrypoint.to=webs-ex
+      - --entrypoints.web-ex.http.redirections.entrypoint.scheme=https
+      # internal https: reachable only within LAN
+      - --entrypoints.webs-in.address=:443
+      # - --entrypoints.webs-in.http.middlewares=lan-only
+      - --entrypoints.webs-in.http.tls=true
+      - --entrypoints.webs-in.http.tls.certResolver=letsencrypt
+      - --entrypoints.webs-in.http.tls.domains[0].main=favo02.dev
+      - --entrypoints.webs-in.http.tls.domains[0].sans=*.favo02.dev
+      # external https: port 80 is mapped to 81 on the router
+      - --entrypoints.webs-ex.address=:444
+      - --entrypoints.webs-ex.http.tls=true
+      - --entrypoints.webs-ex.http.tls.certResolver=letsencrypt
+      - --entrypoints.webs-ex.http.tls.domains[0].main=favo02.dev
+      - --entrypoints.webs-ex.http.tls.domains[0].sans=*.favo02.dev
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.util-traefik.rule=Host(`traefik.favo02.dev`)'
       - 'traefik.http.routers.util-traefik.service=api@internal'
-      - 'traefik.http.routers.util-traefik.entrypoints=websecure'
+      - 'traefik.http.routers.util-traefik.entrypoints=webs-in'
       - 'traefik.http.routers.util-traefik.tls.certresolver=letsencrypt'
       - 'traefik.http.routers.util-traefik.middlewares=auth'
       - 'traefik.http.middlewares.auth.basicauth.users=${BASIC_AUTH}'
-    # read below
+    # read below (networks setup) for more
     networks:
       - proxy01 # util-portainer
       - proxy02 # util-gotify

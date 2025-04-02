@@ -20,7 +20,7 @@ services:
       - 'traefik.docker.network=traefik_proxy04'
       - 'traefik.http.routers.service-firefly.rule=Host(`firefly.favo02.dev`)'
       - 'traefik.http.services.service-firefly.loadbalancer.server.port=8080'
-      - 'traefik.http.routers.service-firefly.entrypoints=websecure'
+      - 'traefik.http.routers.service-firefly.entrypoints=webs-in,webs-ex'
       - 'traefik.http.routers.service-firefly.tls.certresolver=letsencrypt'
 
   db:

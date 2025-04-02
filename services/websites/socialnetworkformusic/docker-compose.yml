@@ -14,7 +14,7 @@ services:
       - 'traefik.docker.network=traefik_proxy07'
       - 'traefik.http.routers.website-socialnetworkformusic.rule=Host(`snm.favo02.dev`) || Host(`socialnetworkformusic.favo02.dev`)'
       - 'traefik.http.services.website-socialnetworkformusic.loadbalancer.server.port=3003'
-      - 'traefik.http.routers.website-socialnetworkformusic.entrypoints=websecure'
+      - 'traefik.http.routers.website-socialnetworkformusic.entrypoints=webs-in,webs-ex'
       - 'traefik.http.routers.website-socialnetworkformusic.tls.certresolver=letsencrypt'
 
 networks:
