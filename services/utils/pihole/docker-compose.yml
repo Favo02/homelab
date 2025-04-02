@@ -1,16 +1,29 @@
 services:
 
-  util-pihole:
+  pihole:
     image: pihole/pihole:latest
     container_name: util-pihole
     restart: unless-stopped
     ports:
       - 53:53/tcp
       - 53:53/udp
-      - 10002:80/tcp
+    # connection is permitted only through reverse proxy
+    #   - 55555:80/tcp
     volumes:
       - './pihole-data:/etc/pihole'
     environment:
       TZ: ${TIMEZONE}
       FTLCONF_dns_listeningMode: ${LISTENING_MODE}
-    shm_size: '100mb' # shared memory is insufficient by default, causing crashes
+    networks:
+      - traefik_proxy09
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy09'
+      - 'traefik.http.routers.util-pihole.rule=Host(`pihole.favo02.dev`)'
+      - 'traefik.http.services.util-pihole.loadbalancer.server.port=80'
+      - 'traefik.http.routers.util-pihole.entrypoints=webs-in'
+      - 'traefik.http.routers.util-pihole.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy09:
+    external: true

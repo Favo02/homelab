@@ -23,7 +23,7 @@ services:
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}
     command:
       - --api.dashboard=true
-      - --log.level=debug
+      - --accesslog.addInternals=true
       # docker provider
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -83,7 +83,7 @@ services:
       - proxy06 # website-favo02dev
       - proxy07 # website-socialnetworkformusic
       - proxy08 # website-superunimia
-      - proxy09
+      - proxy09 # util-pihole
       - proxy10
       - proxy11
       - proxy12
