@@ -1,0 +1,25 @@
+services:
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: service-homeassistant
+    restart: unless-stopped
+    volumes:
+      - './homeassistant-data:/config'
+      - '/etc/localtime:/etc/localtime:ro'
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:8123
+    networks:
+      - traefik_proxy10
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy10'
+      - 'traefik.http.routers.service-homeassistant.rule=Host(`home.favo02.dev`)'
+      - 'traefik.http.services.service-homeassistant.loadbalancer.server.port=8123'
+      - 'traefik.http.routers.service-homeassistant.entrypoints=webs-in'
+      - 'traefik.http.routers.service-homeassistant.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy10:
+    external: true

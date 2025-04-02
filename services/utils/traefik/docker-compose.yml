@@ -84,7 +84,7 @@ services:
       - proxy07 # website-socialnetworkformusic
       - proxy08 # website-superunimia
       - proxy09 # util-pihole
-      - proxy10
+      - proxy10 # service-homeassistant
       - proxy11
       - proxy12
       - proxy13
