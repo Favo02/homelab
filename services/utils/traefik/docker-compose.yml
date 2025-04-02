@@ -59,9 +59,9 @@ services:
       - proxy03 # util-umami
       - proxy04 # service-firefly
       - proxy05 # service-immich
-      - proxy06
-      - proxy07
-      - proxy08
+      - proxy06 # website-favo02dev
+      - proxy07 # website-socialnetworkformusic
+      - proxy08 # website-superunimia
       - proxy09
       - proxy10
       - proxy11

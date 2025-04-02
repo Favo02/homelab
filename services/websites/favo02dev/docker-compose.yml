@@ -1,8 +1,22 @@
 services:
 
-  website-favo02dev:
+  favo02dev:
     image: ghcr.io/favo02/favo02.dev:latest
     container_name: website-favo02dev
     restart: unless-stopped
-    ports:
-      - 3000:3000
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:3000
+    networks:
+      - traefik_proxy06
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy06'
+      - 'traefik.http.routers.website-favo02dev.rule=Host(`favo02.dev`)'
+      - 'traefik.http.services.website-favo02dev.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.website-favo02dev.entrypoints=websecure'
+      - 'traefik.http.routers.website-favo02dev.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy06:
+    external: true

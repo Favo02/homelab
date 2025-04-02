@@ -1,12 +1,22 @@
 services:
 
-  website-superunimia:
-    build: .
+  superunimia:
+    image: ghcr.io/favo02/super-unimia:latest
     container_name: website-superunimia
     restart: unless-stopped
-    ports:
-      - 3002:80
-    volumes:
-      - './src-data:/var/www/html/'
-      - './config-data/php.ini:/usr/local/etc/php/conf.d/php.ini'
-      - './config-data/apache2.conf:/etc/apache2/apache2.conf'
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:80
+    networks:
+      - traefik_proxy08
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy08'
+      - 'traefik.http.routers.website-superunimia.rule=Host(`superunimia.favo02.dev`)'
+      - 'traefik.http.services.website-superunimia.loadbalancer.server.port=80'
+      - 'traefik.http.routers.website-superunimia.entrypoints=websecure'
+      - 'traefik.http.routers.website-superunimia.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy08:
+    external: true

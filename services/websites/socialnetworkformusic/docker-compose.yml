@@ -1,8 +1,22 @@
 services:
 
-  website-socialnetworkformusic:
+  socialnetworkformusic:
     image: ghcr.io/favo02/social-network-for-music:0.28.4
     container_name: website-socialnetworkformusic
     restart: unless-stopped
-    ports:
-      - 3001:3003
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:3003
+    networks:
+      - traefik_proxy07
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy07'
+      - 'traefik.http.routers.website-socialnetworkformusic.rule=Host(`snm.favo02.dev`) || Host(`socialnetworkformusic.favo02.dev`)'
+      - 'traefik.http.services.website-socialnetworkformusic.loadbalancer.server.port=3003'
+      - 'traefik.http.routers.website-socialnetworkformusic.entrypoints=websecure'
+      - 'traefik.http.routers.website-socialnetworkformusic.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy07:
+    external: true
