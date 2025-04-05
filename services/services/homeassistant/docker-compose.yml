@@ -7,6 +7,7 @@ services:
     volumes:
       - './homeassistant-data:/config'
       - '/etc/localtime:/etc/localtime:ro'
+      - '/run/dbus:/run/dbus:ro'
     # connection is permitted only through reverse proxy
     # ports:
     #   - 55555:8123
