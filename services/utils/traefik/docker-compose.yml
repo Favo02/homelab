@@ -85,7 +85,7 @@ services:
       - proxy08 # website-superunimia
       - proxy09 # util-pihole
       - proxy10 # service-homeassistant
-      - proxy11
+      - proxy11 # util-speedtest
       - proxy12
       - proxy13
       - proxy14

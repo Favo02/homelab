@@ -1,19 +1,33 @@
 services:
 
-  util-speedtest:
+  speedtest:
     image: lscr.io/linuxserver/speedtest-tracker:latest
     container_name: util-speedtest
     restart: unless-stopped
     volumes:
       - './speedtest-data:/config'
-    ports:
-      - 10005:80
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 10005:80
     environment:
-      - PUID=1000
-      - PGID=1000
-      - DB_CONNECTION=sqlite
-      - APP_KEY=${APP_KEY}
-      - APP_TIMEZONE=${TIMEZONE}
-      - DISPLAY_TIMEZONE=${TIMEZONE}
-      - SPEEDTEST_SCHEDULE=${SCHEDULE}
-      - PRUNE_RESULTS_OLDER_THAN=${PRUNE}
+      PUID: 1000
+      PGID: 1000
+      DB_CONNECTION: sqlite
+      APP_KEY: ${APP_KEY}
+      APP_TIMEZONE: ${TIMEZONE}
+      DISPLAY_TIMEZONE: ${TIMEZONE}
+      SPEEDTEST_SCHEDULE: ${SCHEDULE}
+      PRUNE_RESULTS_OLDER_THAN: ${PRUNE}
+    networks:
+      - traefik_proxy11
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy11'
+      - 'traefik.http.routers.util-speedtest.rule=Host(`speedtest.favo02.dev`)'
+      - 'traefik.http.services.util-speedtest.loadbalancer.server.port=80'
+      - 'traefik.http.routers.util-speedtest.entrypoints=webs-in'
+      - 'traefik.http.routers.util-speedtest.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy11:
+    external: true
