@@ -1,10 +1,24 @@
 services:
 
-  website-cessadvisorapi:
-    build: ./src-data
+  cessadvisorapi:
+    image: ghcr.io/favo02/cess-advisor:latest
     container_name: website-cessadvisorapi
     restart: unless-stopped
-    ports:
-      - 3003:3000
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:3000
     volumes:
       - './logs-data:/app/logs'
+    networks:
+      - traefik_proxy12
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy12'
+      - 'traefik.http.routers.website-cessadvisorapi.rule=Host(`cessadvisorapi.favo02.dev`)'
+      - 'traefik.http.services.website-cessadvisorapi.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.website-cessadvisorapi.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.website-cessadvisorapi.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy12:
+    external: true
