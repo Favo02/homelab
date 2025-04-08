@@ -90,22 +90,94 @@ services:
       - proxy13
       - proxy14
       - proxy15
+      - proxy16
+      - proxy17
+      - proxy18
+      - proxy19
+      - proxy20
 
 # Networks that let the proxy communicate with containers without allowing cross-container communications
 # More than used are defined to avoid restarting this container when adding a new proxyied service
+# All networks should be /30 as only two hosts are needed (proxy and container), but docker includes
+# the gateway (I think, the first IP is not the actual first) in each network, so /29 are needed
 networks:
   proxy01:
+    ipam:
+      config:
+      - subnet: 10.0.0.0/29
   proxy02:
+    ipam:
+      config:
+      - subnet: 10.0.0.8/29
   proxy03:
+    ipam:
+      config:
+      - subnet: 10.0.0.16/29
   proxy04:
+    ipam:
+      config:
+      - subnet: 10.0.0.24/29
   proxy05:
+    ipam:
+      config:
+      - subnet: 10.0.0.32/29
   proxy06:
+    ipam:
+      config:
+      - subnet: 10.0.0.40/29
   proxy07:
+    ipam:
+      config:
+      - subnet: 10.0.0.48/29
   proxy08:
+    ipam:
+      config:
+      - subnet: 10.0.0.56/29
   proxy09:
+    ipam:
+      config:
+      - subnet: 10.0.0.64/29
   proxy10:
+    ipam:
+      config:
+      - subnet: 10.0.0.72/29
   proxy11:
+    ipam:
+      config:
+      - subnet: 10.0.0.80/29
   proxy12:
+    ipam:
+      config:
+      - subnet: 10.0.0.88/29
   proxy13:
+    ipam:
+      config:
+      - subnet: 10.0.0.96/29
   proxy14:
+    ipam:
+      config:
+      - subnet: 10.0.0.104/29
   proxy15:
+    ipam:
+      config:
+      - subnet: 10.0.0.112/29
+  proxy16:
+    ipam:
+      config:
+      - subnet: 10.0.0.120/29
+  proxy17:
+    ipam:
+      config:
+      - subnet: 10.0.0.128/29
+  proxy18:
+    ipam:
+      config:
+      - subnet: 10.0.0.136/29
+  proxy19:
+    ipam:
+      config:
+      - subnet: 10.0.0.144/29
+  proxy20:
+    ipam:
+      config:
+      - subnet: 10.0.0.152/29
