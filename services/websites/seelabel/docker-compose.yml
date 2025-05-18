@@ -1,11 +1,24 @@
 services:
 
-  website-seelabel:
+  seelabel:
+    image: ghcr.io/favo02/see-label:latest
     container_name: website-seelabel
-    build: ./src-data
     restart: unless-stopped
-    ports:
-      - 3004:8000
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:8000
     environment:
       - MODEL_NAME=yolov9e-seg.pt
-   #  - MODEL_NAME=yolov8x-seg.pt
+    networks:
+      - traefik_proxy13
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy13'
+      - 'traefik.http.routers.website-seelabel.rule=Host(`seelabel.favo02.dev`)'
+      - 'traefik.http.services.website-seelabel.loadbalancer.server.port=8000'
+      - 'traefik.http.routers.website-seelabel.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.website-seelabel.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy13:
+    external: true

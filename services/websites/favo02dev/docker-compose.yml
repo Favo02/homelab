@@ -12,7 +12,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefik_proxy06'
-      - 'traefik.http.routers.website-favo02dev.rule=Host(`favo02.dev`)'
+      - 'traefik.http.routers.website-favo02dev.rule=Host(`favo02.dev`) || Host(`www.favo02.dev`)'
       - 'traefik.http.services.website-favo02dev.loadbalancer.server.port=3000'
       - 'traefik.http.routers.website-favo02dev.entrypoints=webs-in,webs-ex'
       - 'traefik.http.routers.website-favo02dev.tls.certresolver=letsencrypt'
