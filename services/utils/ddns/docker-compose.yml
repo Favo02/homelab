@@ -7,4 +7,3 @@ services:
     environment:
       API_KEY: ${API_KEY}
       ZONE: ${DOMAIN}
-      PROXIED: true
