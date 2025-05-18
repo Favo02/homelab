@@ -23,6 +23,8 @@ services:
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}
     command:
       - --api.dashboard=true
+      - --log.level=debug
+      - --log.format=json
       - --accesslog.addInternals=true
       # docker provider
       - --providers.docker=true
@@ -36,36 +38,39 @@ services:
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.delayBeforeCheck=60
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1
       # plugins and middlewares
-      # TODO: lan only to internal
-      # - --middlewares.lan-only.ipallowlist.sourceRange=127.0.0.1/32,192.168.1.0/24
       # TODO: umami (traefik-umami-feeder ?)
       # TODO: geoblocking
-      # TODO: fail2ban
-      # TODO: rate limiting (crowdsec-bouncer-traefik-plugin ?)
-      # TODO: www redirect
+      # TODO: crowdsec ?
       # internal http: reachable only within LAN
       - --entrypoints.web-in.address=:80
-      # - --entrypoints.web-in.http.middlewares=lan-only
+      - --entrypoints.web-in.http.middlewares=lan-only@docker,rate-limit@docker
       - --entrypoints.web-in.http.redirections.entrypoint.to=webs-in
       - --entrypoints.web-in.http.redirections.entrypoint.scheme=https
       # external http: port 80 is mapped to 81 on the router
       - --entrypoints.web-ex.address=:81
+      - --entrypoints.web-ex.http.middlewares=rate-limit@docker
       - --entrypoints.web-ex.http.redirections.entrypoint.to=webs-ex
       - --entrypoints.web-ex.http.redirections.entrypoint.scheme=https
       # internal https: reachable only within LAN
       - --entrypoints.webs-in.address=:443
-      # - --entrypoints.webs-in.http.middlewares=lan-only
+      - --entrypoints.webs-in.http.middlewares=lan-only@docker,rate-limit@docker
       - --entrypoints.webs-in.http.tls=true
       - --entrypoints.webs-in.http.tls.certResolver=letsencrypt
       - --entrypoints.webs-in.http.tls.domains[0].main=favo02.dev
       - --entrypoints.webs-in.http.tls.domains[0].sans=*.favo02.dev
-      # external https: port 80 is mapped to 81 on the router
+      # external https: port 443 is mapped to 444 on the router
       - --entrypoints.webs-ex.address=:444
+      - --entrypoints.webs-ex.http.middlewares=rate-limit@docker
       - --entrypoints.webs-ex.http.tls=true
       - --entrypoints.webs-ex.http.tls.certResolver=letsencrypt
       - --entrypoints.webs-ex.http.tls.domains[0].main=favo02.dev
       - --entrypoints.webs-ex.http.tls.domains[0].sans=*.favo02.dev
     labels:
+      # --- common middlewares ---
+      - 'traefik.http.middlewares.lan-only.ipallowlist.sourceRange=127.0.0.0/8,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12'
+      - 'traefik.http.middlewares.rate-limit.ratelimit.average=100'
+      - 'traefik.http.middlewares.rate-limit.ratelimit.burst=500'
+      # --- traefik dashboard ---
       - 'traefik.enable=true'
       - 'traefik.http.routers.util-traefik.rule=Host(`traefik.favo02.dev`)'
       - 'traefik.http.routers.util-traefik.service=api@internal'
@@ -87,7 +92,7 @@ services:
       - proxy10 # service-homeassistant
       - proxy11 # util-speedtest
       - proxy12 # website-cessadvisorapi
-      - proxy13
+      - proxy13 # website-seelabel
       - proxy14
       - proxy15
       - proxy16
