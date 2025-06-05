@@ -1,0 +1,14 @@
+services:
+
+  blocky:
+    image: spx01/blocky
+    container_name: util-blocky
+    restart: unless-stopped
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - './blocky-data/config.yml:/app/config.yml:ro'
+    environment:
+      - TZ=${TIMEZONE}
