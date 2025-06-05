@@ -88,7 +88,7 @@ services:
       - proxy06 # website-favo02dev
       - proxy07 # website-socialnetworkformusic
       - proxy08 # website-superunimia
-      - proxy09 # util-pihole
+      - proxy09
       - proxy10 # service-homeassistant
       - proxy11 # util-speedtest
       - proxy12 # website-cessadvisorapi
