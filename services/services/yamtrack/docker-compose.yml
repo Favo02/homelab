@@ -1,0 +1,49 @@
+services:
+
+  yamtrack:
+    image: ghcr.io/fuzzygrim/yamtrack
+    container_name: service-yamtrack
+    restart: unless-stopped
+    volumes:
+      - './yamtrack-data:/yamtrack/db'
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:8000
+    depends_on:
+      - redis
+    environment:
+      - TZ=${TIMEZONE}
+      - SECRET=${SECRET}
+      - REDIS_URL=redis://redis:6379
+      - URLS=https://yamtrack.favo02.dev
+      - REGISTRATION=False
+      - TMDB_NSFW=True
+      - TMDB_API=${TMDB_API}
+      - MAL_NSFW=True
+      - MAL_API=${MAL_API}
+      - MU_NSFW=True
+      - HARDCOVER_API=${HARDCOVER_API}
+    networks:
+      - default
+      - traefik_proxy09
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy09'
+      - 'traefik.http.routers.service-yamtrack.rule=Host(`yamtrack.favo02.dev`)'
+      - 'traefik.http.services.service-yamtrack.loadbalancer.server.port=8000'
+      - 'traefik.http.routers.service-yamtrack.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-yamtrack.tls.certresolver=letsencrypt'
+
+  redis:
+    image: redis:7-alpine
+    container_name: service-yamtrack-redis
+    restart: unless-stopped
+    volumes:
+      - './yamtrack-redis-data:/data'
+    networks:
+      - default
+
+networks:
+  default:
+  traefik_proxy09:
+    external: true
