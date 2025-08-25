@@ -95,7 +95,7 @@ services:
       - proxy13 # website-seelabel
       - proxy14
       - proxy15
-      - proxy16
+      - proxy16 # service-split
       - proxy17
       - proxy18
       - proxy19

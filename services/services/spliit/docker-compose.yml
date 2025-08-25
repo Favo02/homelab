@@ -1,0 +1,43 @@
+services:
+
+  spliit:
+    image: ghcr.io/favo02/spliit
+    container_name: service-spliit
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:3000
+    environment:
+      - POSTGRES_PRISMA_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db
+      - POSTGRES_URL_NON_POOLING=postgresql://postgres:${POSTGRES_PASSWORD}@db
+    depends_on:
+      - db
+    networks:
+      - default
+      - traefik_proxy16
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy16'
+      - 'traefik.http.routers.service-spliit.rule=Host(`split.favo02.dev`) || Host(`spliit.favo02.dev`)'
+      - 'traefik.http.services.service-spliit.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.service-spliit.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-spliit.tls.certresolver=letsencrypt'
+      - 'traefik.http.middlewares.spliit-replacepathregex.replacepathregex.regex=^/$'
+      - 'traefik.http.middlewares.spliit-replacepathregex.replacepathregex.replacement=/groups'
+      - 'traefik.http.routers.service-spliit.middlewares=spliit-replacepathregex@docker'
+
+  db:
+    image: postgres:15-alpine
+    container_name: service-spliit-db
+    restart: unless-stopped
+    volumes:
+      - './spliit-data:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - default
+
+networks:
+  default:
+  traefik_proxy16:
+    external: true
