@@ -57,7 +57,52 @@ services:
     networks:
       - default
 
+  firefly-pico:
+    image: cioraneanu/firefly-pico:latest
+    container_name: service-firefly-pico
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:80
+    environment:
+      - FIREFLY_URL=${FIREFLY_URL}
+      - DB_CONNECTION=${PICO_DB_CONNECTION}
+      - DB_HOST=${PICO_DB_HOST}
+      - DB_PORT=${PICO_DB_PORT}
+      - DB_DATABASE=${PICO_DB_DATABASE}
+      - DB_USERNAME=${PICO_DB_USERNAME}
+      - DB_PASSWORD=${PICO_DB_PASSWORD}
+      - TZ=${TZ}
+    depends_on:
+      - firefly-pico-db
+    networks:
+      - pico
+      - traefik_proxy17
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy17'
+      - 'traefik.http.routers.service-firefly-pico.rule=Host(`firefly-pico.favo02.dev`) || Host(`pico.favo02.dev`)'
+      - 'traefik.http.services.service-firefly-pico.loadbalancer.server.port=80'
+      - 'traefik.http.routers.service-firefly-pico.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-firefly-pico.tls.certresolver=letsencrypt'
+
+  firefly-pico-db:
+    image: postgres:latest
+    container_name: service-firefly-pico-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - './firefly-pico-db-data:/var/lib/postgresql/data'
+    networks:
+      - pico
+
 networks:
   default:
+  pico:
   traefik_proxy04:
+    external: true
+  traefik_proxy17:
     external: true
