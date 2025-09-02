@@ -7,8 +7,11 @@ services:
     volumes:
       - './library-data:/usr/src/app/upload'
       - '/etc/localtime:/etc/localtime:ro'
-    env_file:
-      - .env
+    environment:
+      - TZ=${TZ}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_DATABASE_NAME=${DB_DATABASE_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
     # connection is permitted only through reverse proxy
     # ports:
     #   - 55555:2283
@@ -36,8 +39,8 @@ services:
     restart: unless-stopped
     volumes:
       - './ml-cache-data:/cache'
-    env_file:
-      - .env
+    environment:
+      - TZ=${TZ}
     healthcheck:
       disable: false
     networks:

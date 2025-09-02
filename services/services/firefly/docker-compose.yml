@@ -9,7 +9,19 @@ services:
     #   - 55555:8080
     volumes:
       - './firefly-upload-data:/var/www/html/storage/upload'
-    env_file: .env
+    environment:
+      - APP_KEY=${APP_KEY}
+      - DB_CONNECTION=${DB_CONNECTION}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE}
+      - DEFAULT_LOCALE=${DEFAULT_LOCALE}
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES}
+      - TZ=${TZ}
+      - STATIC_CRON_TOKEN=${STATIC_CRON_TOKEN}
     depends_on:
       - db
     networks:
@@ -27,7 +39,11 @@ services:
     image: mariadb:latest
     container_name: service-firefly-db
     restart: unless-stopped
-    env_file: .db.env
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=${MYSQL_RANDOM_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - './firefly-db-data:/var/lib/mysql'
     networks:
