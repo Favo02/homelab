@@ -1,0 +1,30 @@
+services:
+
+  yourspotify:
+    image: lscr.io/linuxserver/your_spotify:latest
+    container_name: service-yourspotify
+    restart: unless-stopped
+    environment:
+      - TZ=${TIMEZONE}
+      - APP_URL=https://yourspotify.favo02.dev
+      - SPOTIFY_PUBLIC=${SPOTIFY_PUBLIC}
+      - SPOTIFY_SECRET=${SPOTIFY_SECRET}
+      - MONGO_ENDPOINT=${MONGO_ENDPOINT}
+      - MONGO_NO_ADMIN_RIGHTS=true
+      - CORS=https://yourspotify.favo02.dev
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:80
+    networks:
+      - traefik_proxy18
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy18'
+      - 'traefik.http.routers.service-yourspotify.rule=Host(`yourspotify.favo02.dev`)'
+      - 'traefik.http.services.service-yourspotify.loadbalancer.server.port=80'
+      - 'traefik.http.routers.service-yourspotify.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-yourspotify.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy18:
+    external: true
