@@ -78,7 +78,7 @@ ensure_repo() {
     restic init || error "Failed to initialize repository $RESTIC_REPOSITORY"
 
     print "Verifying repository usability (snapshot list)"
-    if ! restic snapshots --limit 1 >/dev/null 2>&1; then
+    if ! restic cat config >/dev/null 2>&1; then
         error "Repository $RESTIC_REPOSITORY still not available after init"
     fi
     print "Repository initialized and verified"
