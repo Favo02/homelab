@@ -3,9 +3,8 @@
 # Output helpers
 print() { echo -e "\033[32m---> $*\033[0m"; }
 notify() {
-    # call notifier only if provided and executable
-    if [ -n "${ERROR_NOTIFICATIONS:-}" ] && [ -x "${ERROR_NOTIFICATIONS}" ]; then
-        "${ERROR_NOTIFICATIONS}" "$1" "$*"
+    if [ -n "${NOTIFICATIONS_EXE:-}" ] && [ -x "${NOTIFICATIONS_EXE}" ]; then
+        "${NOTIFICATIONS_EXE}" "$1" "$*"
     fi
 }
 error() {
@@ -17,16 +16,20 @@ input() { echo -ne "\033[33m---> $*\033[0m"; }
 usage() {
     cat <<EOF
 Usage
-    $0 <SOURCE_FOLDER> <RESTIC_REPOSITORY> <RESTIC_PASSWORD_FILE> <RCLONE_CONFIG> <ERROR_NOTIFICATIONS>
+    $0 -s <SOURCE_FOLDER> -r <RESTIC_REPOSITORY> -p <RESTIC_PASSWORD_FILE> [-c <RCLONE_CONFIG>] [-n <NOTIFICATIONS_EXE>]
 
-    Source folder: folder to be backed up
-    Restic repository: restic repository that contains the snapshots of the data (can be both local or remote using rclone)
-    Restic password file: file that contains repository password
-    Rclone config: rclone config file (contains remote repositories config)
-    Error notifications: executable to pass arguments to notify errors (called with two arguments)
+Options:
+    -s, --source       Source folder to be backed up (required)
+    -r, --repo         Restic repository for snapshots (required)
+    -p, --password     Restic password file (required)
+    -c, --rclone       Rclone config file (optional, required if repository starts with "rclone:")
+    -n, --notify       Executable for error notifications (optional), will be called with two arguments: <NOTIFICATIONS_EXE> <title> <details>
+    -h, --help         Show this help message
 
-Example:
-    $0 /home/user/Documents "rclone:google-drive:restic-backups" /home/user/scripts/.restic-key /home/user/.config/rclone/rclone.conf /home/user/notify.sh
+Examples:
+    $0 -s /home/user/Documents -r "rclone:google-drive:restic-backups" -p .restic-key -c /home/user/.config/rclone/rclone.conf -n notify.sh
+    $0 -s /home/user/Documents -r /local/backup/repo -p .restic-key -n notify.sh
+    $0 -s /home/user/Documents -r /local/backup/repo -p .restic-key
 EOF
     exit 2
 }
@@ -46,25 +49,77 @@ for _cmd in restic rclone; do
     fi
 done
 
-# args validation
-if [ "$#" -ne 5 ]; then
-    usage
-fi
+# Initialize variables
+SOURCE_FOLDER=""
+RESTIC_REPOSITORY=""
+RESTIC_PASSWORD_FILE=""
+RCLONE_CONFIG=""
+NOTIFICATIONS_EXE=""
 
-SOURCE_FOLDER="$1"
-RESTIC_REPOSITORY="$2"
-RESTIC_PASSWORD_FILE="$3"
-RCLONE_CONFIG="$4"
-ERROR_NOTIFICATIONS="$5"
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -s|--source)
+            SOURCE_FOLDER="$2"
+            shift 2
+            ;;
+        -r|--repo)
+            RESTIC_REPOSITORY="$2"
+            shift 2
+            ;;
+        -p|--password)
+            RESTIC_PASSWORD_FILE="$2"
+            shift 2
+            ;;
+        -c|--rclone)
+            RCLONE_CONFIG="$2"
+            shift 2
+            ;;
+        -n|--notify)
+            NOTIFICATIONS_EXE="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "Unknown option: $1"
+            usage
+            ;;
+    esac
+done
 
-# validate folders
+# Validate required arguments
+[ -z "$SOURCE_FOLDER" ] && error "Source folder is required (-s/--source)"
+[ -z "$RESTIC_REPOSITORY" ] && error "Restic repository is required (-r/--repo)"
+[ -z "$RESTIC_PASSWORD_FILE" ] && error "Password file is required (-p/--password)"
+
+# Validate paths
 [ -e "$RESTIC_PASSWORD_FILE" ] || error "Password file '$RESTIC_PASSWORD_FILE' not found"
 [ -d "$SOURCE_FOLDER" ] || error "Source folder '$SOURCE_FOLDER' does not exist or is not a directory"
-[ -e "$RCLONE_CONFIG" ] || error "Rclone config file '$RCLONE_CONFIG' not found"
+
+# Validate rclone config if repository uses rclone
+if [[ "$RESTIC_REPOSITORY" == rclone:* ]]; then
+    if [ -z "$RCLONE_CONFIG" ]; then
+        error "Rclone config file is required when using an rclone repository (-c/--rclone)"
+    fi
+    [ -e "$RCLONE_CONFIG" ] || error "Rclone config file '$RCLONE_CONFIG' not found"
+fi
+
+# Validate notifications executable if provided
+if [ -n "${NOTIFICATIONS_EXE:-}" ]; then
+    if command -v "${NOTIFICATIONS_EXE}" >/dev/null 2>&1; then
+        NOTIFICATIONS_EXE="$(command -v "${NOTIFICATIONS_EXE}")"
+    elif [ -x "${NOTIFICATIONS_EXE}" ]; then
+        NOTIFICATIONS_EXE="$(readlink -f "${NOTIFICATIONS_EXE}" 2>/dev/null || echo "${NOTIFICATIONS_EXE}")"
+    else
+        error "Notifications executable '${NOTIFICATIONS_EXE}' not found or not executable"
+    fi
+fi
 
 export RESTIC_REPOSITORY
 export RESTIC_PASSWORD_FILE
-export RCLONE_CONFIG
+[ -n "$RCLONE_CONFIG" ] && export RCLONE_CONFIG
 
 ensure_repo() {
     print "Checking restic repository: $RESTIC_REPOSITORY"

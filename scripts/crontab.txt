@@ -1,4 +1,9 @@
 # sudo cronjobs
-00 03 * * * /home/server/scripts/restic-backup.sh >> /home/server/scripts/logs.txt 2>&1
-30 03 * * 2 /home/server/scripts/docker-system-prune.sh >> /home/server/scripts/logs.txt 2>&1
-00 04 * * 2 /home/server/scripts/update-reboot.sh >> /home/server/scripts/logs.txt 2>&1
+
+00 03 * * * $HOME/scripts/restic-backup.sh -s $HOME/services -r $HOME/backups -p $HOME/scripts/.restic-local-key -n $HOME/scripts/notify.sh >> $HOME/scripts/logs.txt 2>&1
+
+20 03 * * * $HOME/scripts/restic-backup.sh -s $HOME/services -r "rclone:google-drive:server-backups" -p $HOME/scripts/.restic-remote-key -n $HOME/scripts/notify.sh >> $HOME/scripts/logs.txt 2>&1
+
+40 03 * * * $HOME/scripts/restic-backup.sh -s $HOME/services -r "rclone:microsoft-onedrive:server-backups" -p $HOME/scripts/.restic-remote-key -n $HOME/scripts/notify.sh >> $HOME/scripts/logs.txt 2>&1
+
+00 04 * * 2 $HOME/scripts/maintenance.sh -n $HOME/scripts/notify.sh >> $HOME/scripts/logs.txt 2>&1
