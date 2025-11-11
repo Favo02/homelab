@@ -1,7 +1,7 @@
 #!/bin/bash
 
-URL=$(<./.gotify-url)
-TOKEN=$(<./.gotify-token)
+URL=$(</home/server/scripts/.gotify-url)
+TOKEN=$(</home/server/scripts/.gotify-token)
 TITLE=$1
 TEXT=$2
 
