@@ -90,7 +90,7 @@ services:
       - proxy08 # website-superunimia
       - proxy09 # service-yamtrack
       - proxy10 # service-homeassistant
-      - proxy11 # util-speedtest
+      - proxy11
       - proxy12 # website-cessadvisorapi
       - proxy13 # website-seelabel
       - proxy14
