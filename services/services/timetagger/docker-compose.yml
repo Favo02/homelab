@@ -1,0 +1,29 @@
+services:
+
+  timetagger:
+    image: ghcr.io/almarklein/timetagger:latest
+    container_name: service-timetagger
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:80
+    volumes:
+      - './timetagger-data:/data'
+    environment:
+      - TIMETAGGER_BIND=0.0.0.0:80
+      - TIMETAGGER_DATADIR=/data
+      - TIMETAGGER_LOG_LEVEL=info
+      - TIMETAGGER_CREDENTIALS=${TIMETAGGER_CREDENTIALS}
+    networks:
+      - traefik_proxy11
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy11'
+      - 'traefik.http.routers.service-timetagger.rule=Host(`time.favo02.dev`) || Host(`timetagger.favo02.dev`)'
+      - 'traefik.http.services.service-timetagger.loadbalancer.server.port=80'
+      - 'traefik.http.routers.service-timetagger.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-timetagger.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy11:
+    external: true
