@@ -13,11 +13,8 @@ services:
       - BASE_URL=https://favo02.dev
       - APP_SECURITY_BASIC-AUTH-USERS_favo=${PASSWORD}
       - PAGE_CHALLENGES_VISIBLE=true
-      # TODO: chown ./habitsync-data -R 1000:1000 from version 17
       - PUID=1000
       - PGID=1000
-      # TODO: remove from version 17
-      - SPRING_MAIL_ENABLED=false
     networks:
       - traefik_proxy19
     labels:
