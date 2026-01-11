@@ -1,0 +1,33 @@
+services:
+
+  habitsync:
+    image: ghcr.io/jofoerster/habitsync
+    container_name: service-habitsync
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:6842
+    volumes:
+      - './habitsync-data:/data'
+    environment:
+      - BASE_URL=https://favo02.dev
+      - APP_SECURITY_BASIC-AUTH-USERS_favo=${PASSWORD}
+      - PAGE_CHALLENGES_VISIBLE=true
+      # TODO: chown ./habitsync-data -R 1000:1000 from version 17
+      - PUID=1000
+      - PGID=1000
+      # TODO: remove from version 17
+      - SPRING_MAIL_ENABLED=false
+    networks:
+      - traefik_proxy19
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy19'
+      - 'traefik.http.routers.service-habitsync.rule=Host(`habit.favo02.dev`) || Host(`habitsync.favo02.dev`)'
+      - 'traefik.http.services.service-habitsync.loadbalancer.server.port=6842'
+      - 'traefik.http.routers.service-habitsync.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-habitsync.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy19:
+    external: true

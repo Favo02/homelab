@@ -98,7 +98,7 @@ services:
       - proxy16 # service-split
       - proxy17
       - proxy18 # service-yourspotify
-      - proxy19
+      - proxy19 # service-habitsync
       - proxy20
 
 # Networks that let the proxy communicate with containers without allowing cross-container communications
