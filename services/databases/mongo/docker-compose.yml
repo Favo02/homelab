@@ -1,7 +1,7 @@
 services:
 
   mongo:
-    image: mongo:4.4.6 # cannot upgrade due to server CPU
+    image: mongo:8.0
     container_name: database-mongo
     restart: unless-stopped
     ports:
