@@ -12,7 +12,7 @@ services:
     environment:
       - BASE_URL=https://favo02.dev
       - APP_SECURITY_BASIC-AUTH-USERS_favo=${PASSWORD}
-      - PAGE_CHALLENGES_VISIBLE=true
+      - PAGE_CHALLENGES_VISIBLE=false
       - PUID=1000
       - PGID=1000
     networks:
