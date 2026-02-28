@@ -1,0 +1,84 @@
+services:
+
+  broker:
+    image: docker.io/library/redis:8
+    container_name: service-paperless-redis
+    restart: unless-stopped
+    volumes:
+      - './redis-data:/data'
+    networks:
+      - default
+
+  db:
+    image: docker.io/library/postgres:18
+    container_name: service-paperless-db
+    restart: unless-stopped
+    volumes:
+      - './db-data:/var/lib/postgresql'
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - default
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.19
+    container_name: service-paperless-app
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:8000
+    volumes:
+      - './paperless-data:/usr/src/paperless/data'
+      - './media-data:/usr/src/paperless/media'
+      - './export-data:/usr/src/paperless/export'
+      - './consume-data:/usr/src/paperless/consume'
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBNAME: ${POSTGRES_DB}
+      PAPERLESS_DBUSER: ${POSTGRES_USER}
+      PAPERLESS_DBPASS: ${POSTGRES_PASSWORD}
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+    depends_on:
+      - db
+      - broker
+      - gotenberg
+      - tika
+    env_file: .env
+    networks:
+      - default
+      - traefik_proxy20
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy20'
+      - 'traefik.http.routers.service-paperless.rule=Host(`paperless.favo02.dev`)'
+      - 'traefik.http.services.service-paperless.loadbalancer.server.port=8000'
+      - 'traefik.http.routers.service-paperless.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-paperless.tls.certresolver=letsencrypt'
+
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:8.25
+    container_name: service-paperless-gotenberg
+    restart: unless-stopped
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    networks:
+      - default
+
+  tika:
+    image: docker.io/apache/tika:latest
+    container_name: service-paperless-tika
+    restart: unless-stopped
+    networks:
+      - default
+
+networks:
+  default:
+  traefik_proxy20:
+    external: true

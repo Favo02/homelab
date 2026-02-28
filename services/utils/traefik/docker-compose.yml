@@ -99,7 +99,7 @@ services:
       - proxy17
       - proxy18 # service-yourspotify
       - proxy19 # service-habitsync
-      - proxy20
+      - proxy20 # service-paperless
 
 # Networks that let the proxy communicate with containers without allowing cross-container communications
 # More than used are defined to avoid restarting this container when adding a new proxyied service
