@@ -23,6 +23,7 @@ services:
       - APPLICATION_HOSTS=${APPLICATION_HOSTS}
       - TIME_ZONE=${TZ}
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - GEOAPIFY_API_KEY=${GEOAPIFY_API_KEY}
     entrypoint: web-entrypoint.sh
     command: ['bin/rails', 'server', '-p', '3000', '-b', '::']
     healthcheck:
@@ -90,6 +91,7 @@ services:
       - DATABASE_NAME=${DATABASE_NAME}
       - APPLICATION_HOSTS=${APPLICATION_HOSTS}
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - GEOAPIFY_API_KEY=${GEOAPIFY_API_KEY}
     entrypoint: sidekiq-entrypoint.sh
     command: ['sidekiq']
     healthcheck:
