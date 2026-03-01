@@ -1,0 +1,39 @@
+services:
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: service-ollama
+    restart: unless-stopped
+    volumes:
+      - './ollama-data:/root/.ollama'
+    networks:
+      - default
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: service-ollama-gui
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:8080
+    volumes:
+      - './open-webui-data:/app/backend/data'
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      - ollama
+    networks:
+      - default
+      - traefik_proxy15
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy15'
+      - 'traefik.http.routers.service-ollama.rule=Host(`ollama.favo02.dev`)'
+      - 'traefik.http.services.service-ollama.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.service-ollama.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-ollama.tls.certresolver=letsencrypt'
+
+networks:
+  default:
+  traefik_proxy15:
+    external: true

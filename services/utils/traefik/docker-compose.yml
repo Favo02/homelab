@@ -94,7 +94,7 @@ services:
       - proxy12 # website-cessadvisorapi
       - proxy13 # website-seelabel
       - proxy14 # service-dawarich
-      - proxy15
+      - proxy15 # service-ollama
       - proxy16 # service-split
       - proxy17
       - proxy18 # service-yourspotify
