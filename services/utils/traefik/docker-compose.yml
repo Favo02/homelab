@@ -100,6 +100,16 @@ services:
       - proxy18 # service-yourspotify
       - proxy19 # service-habitsync
       - proxy20 # service-paperless
+      - proxy21
+      - proxy22
+      - proxy23
+      - proxy24
+      - proxy25
+      - proxy26
+      - proxy27
+      - proxy28
+      - proxy29
+      - proxy30
 
 # Networks that let the proxy communicate with containers without allowing cross-container communications
 # More than used are defined to avoid restarting this container when adding a new proxyied service
@@ -186,3 +196,43 @@ networks:
     ipam:
       config:
       - subnet: 10.0.0.152/29
+  proxy21:
+    ipam:
+      config:
+      - subnet: 10.0.0.160/29
+  proxy22:
+    ipam:
+      config:
+      - subnet: 10.0.0.168/29
+  proxy23:
+    ipam:
+      config:
+      - subnet: 10.0.0.176/29
+  proxy24:
+    ipam:
+      config:
+      - subnet: 10.0.0.184/29
+  proxy25:
+    ipam:
+      config:
+      - subnet: 10.0.0.192/29
+  proxy26:
+    ipam:
+      config:
+      - subnet: 10.0.0.200/29
+  proxy27:
+    ipam:
+      config:
+      - subnet: 10.0.0.208/29
+  proxy28:
+    ipam:
+      config:
+      - subnet: 10.0.0.216/29
+  proxy29:
+    ipam:
+      config:
+      - subnet: 10.0.0.224/29
+  proxy30:
+    ipam:
+      config:
+      - subnet: 10.0.0.232/29
