@@ -1,0 +1,27 @@
+services:
+
+  app:
+    image: ghcr.io/itskovacs/trip:latest
+    container_name: service-trip
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:8000
+    volumes:
+      - './trip-data:/app/storage'
+    environment:
+      - REGISTER_ENABLE=false
+    command: ["fastapi", "run", "/app/trip/main.py", "--host", "0.0.0.0"]
+    networks:
+      - traefik_proxy21
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy21'
+      - 'traefik.http.routers.service-trip.rule=Host(`trip.favo02.dev`)'
+      - 'traefik.http.services.service-trip.loadbalancer.server.port=8000'
+      - 'traefik.http.routers.service-trip.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.service-trip.tls.certresolver=letsencrypt'
+
+networks:
+  traefik_proxy21:
+    external: true

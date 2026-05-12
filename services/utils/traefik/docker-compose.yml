@@ -100,7 +100,7 @@ services:
       - proxy18 # service-yourspotify
       - proxy19 # service-habitsync
       - proxy20 # service-paperless
-      - proxy21
+      - proxy21 # service-trip
       - proxy22
       - proxy23
       - proxy24
