@@ -23,7 +23,7 @@ services:
       - default
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.19
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
     container_name: service-paperless-app
     restart: unless-stopped
     # connection is permitted only through reverse proxy
