@@ -1,8 +1,8 @@
 services:
 
-  favo02dev:
-    image: ghcr.io/favo02/favo02.dev:latest
-    container_name: website-favo02dev
+  favo02dev-v1:
+    image: ghcr.io/favo02/favo02.dev:v1-latest
+    container_name: website-favo02dev-v1
     restart: unless-stopped
     # connection is permitted only through reverse proxy
     # ports:
@@ -12,11 +12,40 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefik_proxy06'
+      - 'traefik.http.routers.website-favo02dev-v1.rule=Host(`v1.favo02.dev`)'
+      - 'traefik.http.services.website-favo02dev-v1.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.website-favo02dev-v1.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.website-favo02dev-v1.tls.certresolver=letsencrypt'
+
+  favo02dev:
+    image: ghcr.io/favo02/favo02.dev:latest
+    container_name: website-favo02dev
+    restart: unless-stopped
+    # connection is permitted only through reverse proxy
+    # ports:
+    #   - 55555:4321
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+    networks:
+      - traefik_proxy26
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik_proxy26'
       - 'traefik.http.routers.website-favo02dev.rule=Host(`favo02.dev`) || Host(`www.favo02.dev`)'
-      - 'traefik.http.services.website-favo02dev.loadbalancer.server.port=3000'
+      - 'traefik.http.services.website-favo02dev.loadbalancer.server.port=4321'
       - 'traefik.http.routers.website-favo02dev.entrypoints=webs-in,webs-ex'
       - 'traefik.http.routers.website-favo02dev.tls.certresolver=letsencrypt'
+      - 'traefik.http.middlewares.website-favo02dev-blog-redirect.redirectregex.regex=^https?://blog\.favo02\.dev/(.*)'
+      - 'traefik.http.middlewares.website-favo02dev-blog-redirect.redirectregex.replacement=https://favo02.dev/blog/$${1}'
+      - 'traefik.http.middlewares.website-favo02dev-blog-redirect.redirectregex.permanent=true'
+      - 'traefik.http.routers.website-favo02dev-blog.rule=Host(`blog.favo02.dev`)'
+      - 'traefik.http.routers.website-favo02dev-blog.entrypoints=webs-in,webs-ex'
+      - 'traefik.http.routers.website-favo02dev-blog.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.website-favo02dev-blog.middlewares=website-favo02dev-blog-redirect'
+      - 'traefik.http.routers.website-favo02dev-blog.service=website-favo02dev'
 
 networks:
   traefik_proxy06:
+    external: true
+  traefik_proxy26:
     external: true

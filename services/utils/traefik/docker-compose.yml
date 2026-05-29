@@ -85,7 +85,7 @@ services:
       - proxy03 # util-umami
       - proxy04 # service-firefly
       - proxy05 # service-immich
-      - proxy06 # website-favo02dev
+      - proxy06 # website-favo02dev-v1
       - proxy07 # website-socialnetworkformusic
       - proxy08 # website-superunimia
       - proxy09 # service-yamtrack
@@ -105,7 +105,7 @@ services:
       - proxy23
       - proxy24
       - proxy25
-      - proxy26
+      - proxy26 # website-favo02dev-v2
       - proxy27
       - proxy28
       - proxy29
